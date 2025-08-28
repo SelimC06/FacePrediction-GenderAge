@@ -3,6 +3,7 @@ import mediapipe as mp
 
 mp_face_mesh = mp.solutions.face_mesh
 face_mesh = mp_face_mesh.FaceMesh()
+mpDraw = mp.solutions.drawing_utils
 
 cap = cv2.VideoCapture(0)
 
@@ -13,13 +14,10 @@ while True:
 
     results = face_mesh.process(rgb_image)
 
-    for facial_landmarks in results.multi_face_landmarks:
-        for i in range(0, 468):
-            pt1 = facial_landmarks.landmark[i]
-            x = int(pt1.x * width)
-            y = int(pt1.y * height)
-
-            cv2.circle(image, (x,y), 2, (100,100,0), -1)
+    if results.multi_face_landmarks:
+        for faceLms in results.multi_face_landmarks:
+            mpDraw.draw_landmarks(image, faceLms, )
+            mpDraw.draw_landmarks(image, faceLms, mp_face_mesh.FACEMESH_CONTOURS, mpDraw.DrawingSpec(color=(255,0,0), thickness=1, circle_radius=1))
 
     cv2.imshow("Image", image)
     cv2.waitKey(1)    
